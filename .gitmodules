@@ -1,3 +1,6 @@
 [submodule "chat-frontend"]
 	path = chat-frontend
 	url = https://github.com/RomSribn/chat-frontend
+[submodule "chat-backend"]
+	path = chat-backend
+	url = https://github.com/RomSribn/chat-backend
