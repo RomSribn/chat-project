@@ -1,0 +1,44 @@
+version: '3.9'
+
+services:
+  mongo:
+    image: mongo:7.0
+    container_name: mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    environment:
+      MONGO_INITDB_DATABASE: chat-app
+
+  chat-backend:
+    build:
+      context: ./chat-backend
+      dockerfile: Dockerfile
+    container_name: chat-backend
+    ports:
+      - "4000:4000"
+    depends_on:
+      - mongo
+    environment:
+      - APP_MONGO_URI=mongodb://mongo:27017/chat-app
+      - NODE_ENV=production
+
+  chat-frontend:
+    build:
+      context: ./chat-frontend
+      dockerfile: Dockerfile
+    container_name: chat-frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - chat-backend
+    environment:
+      - VITE_API_BASE_URL=http://localhost:4000/api
+      - VITE_SOCKET_BASE_URL=http://localhost:4000
+      - VITE_ERROR_TRACKING_ENABLED=false
+      - VITE_ERROR_TRACKING_URL=http://localhost:4000/errors
+
+volumes:
+  mongo-data:
